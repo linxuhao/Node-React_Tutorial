@@ -82,7 +82,7 @@ async function remove(req, res) {
 }
 
 async function update(req, res) {
-  const { name, users } = req.body;
+  const { name, user_mails } = req.body;
   if (!name ) {
     //Le cas où tous les champs nécessaires ne serait pas soumit ou nul
     return res.status(400).json({
@@ -95,8 +95,8 @@ async function update(req, res) {
   // On check en base si obet existe déjà
   try {
     array = [];
-    //only update if the sub organization
-    for(const email of users)
+    //only update if exist
+    for(const email of user_mails)
     {
       const find = await User.findOne({email}, function (err, doc) {
         array.push(doc);
@@ -117,7 +117,6 @@ async function update(req, res) {
       });
     }
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error });
   }
 }

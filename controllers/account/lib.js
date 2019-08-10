@@ -1,5 +1,6 @@
 const User = require("../../schema/schemaUser.js");
 const passwordHash = require("password-hash");
+const Organization = require("../../schema/schemaOrganization.js");
 
 //need username when signing up
 async function signup(req, res) {
@@ -93,8 +94,47 @@ async function get(req, res) {
   }
 }
 
+async function update(req, res) {
+  const { email, name, organization } = req.body;
+  if (!email ) {
+    //Le cas où tous les champs nécessaires ne serait pas soumit ou nul
+    return res.status(400).json({
+      text: "Requête invalide"
+    });
+  }
+  const filter = {
+    email
+  };
+  // On check en base si obet existe déjà
+  try {
+    var orga;
+    //only update if exist
+    await Organization.findOne({name: organization}, function (err, doc) {
+      orga = doc;
+    });
+    const update = {
+      email,
+      name,
+      organization: orga
+    };
+    const find = await User.findOneAndUpdate(filter, update);
+    if (find) {
+      return res.status(200).json({
+      text: "Succès"
+      });
+    }else{
+      return res.status(400).json({
+        text: "L'User n'existe pas"
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+}
+
 //On exporte nos deux fonctions
 
 exports.login = login;
 exports.signup = signup;
 exports.get = get;
+exports.update = update;

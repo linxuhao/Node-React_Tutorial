@@ -91,7 +91,7 @@ async function update(req, res) {
   try {
     orga_array = [];
 
-    //only update if the sub organization
+    //only update if exist
     for(const name of subOrganizations)
     {
       const find = await Organization.findOne({name}, function (err, doc) {
