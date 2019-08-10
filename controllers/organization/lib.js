@@ -3,42 +3,43 @@ const Organization = require("../../schema/schemaOrganization.js");
 //get all
 async function get(req, res) {
   // get all users from the data base
+  var orgas;
   try {
-    const find = await Organization.find();
+    const find = await Organization.find({},function (err, docs) {
+      orgas = docs
+    });
   } catch (error) {
-    return res.status(500).json({ error });
+    return res.status(500).json(error);
   }
   try {
     return res.status(200).json({
-      organizations : find
+      organizations : orgas
     });
   } catch (error) {
-    return res.status(500).json({ error });
+    return res.status(500).json(error);
   }
 }
-//TODO
+
 async function add(req, res) {
-  const { password, email, name } = req.body;
-  if (!email || !password || !name) {
+  const { name } = req.body;
+  if (!name ) {
     //Le cas où tous les champs nécessaires ne serait pas soumit ou nul
     return res.status(400).json({
       text: "Requête invalide"
     });
   }
-  // Création d'un objet user, dans lequel on hash le mot de passe
-  const user = {
-    email,
-    name,
-    password: passwordHash.generate(password)
+  // Création d'un new objet
+  const orga = {
+    name
   };
-  // On check en base si l'utilisateur existe déjà
+  // On check en base si obet existe déjà
   try {
-    const findUser = await User.findOne({
-      email
+    const find = await Organization.findOne({
+      name
     });
-    if (findUser) {
+    if (find) {
       return res.status(400).json({
-        text: "L'utilisateur existe déjà"
+        text: "L'Organization existe déjà"
       });
     }
   } catch (error) {
@@ -46,11 +47,10 @@ async function add(req, res) {
   }
   try {
     // Sauvegarde de l'utilisateur en base
-    const userData = new User(user);
-    const userObject = await userData.save();
+    const data = new Organization(orga);
+    const object = await data.save();
     return res.status(200).json({
-      text: "Succès",
-      token: userObject.getToken()
+      text: "Succès"
     });
   } catch (error) {
     return res.status(500).json({ error });
@@ -58,15 +58,18 @@ async function add(req, res) {
 }
 
 async function remove(req, res) {
-  // get all users from the data base
-  try {
-    const find = await Organization.find();
-  } catch (error) {
-    return res.status(500).json({ error });
+  const { name } = req.body;
+  if (!name ) {
+    //Le cas où tous les champs nécessaires ne serait pas soumit ou nul
+    return res.status(400).json({
+      text: "Requête invalide"
+    });
   }
+  // On check en base si obet existe déjà
   try {
+    const find = await Organization.findOneAndRemove({name});
     return res.status(200).json({
-      organizations : find
+      text: "Succès"
     });
   } catch (error) {
     return res.status(500).json({ error });
@@ -74,16 +77,44 @@ async function remove(req, res) {
 }
 
 async function update(req, res) {
-  // get all users from the data base
-  try {
-    const find = await Organization.find();
-  } catch (error) {
-    return res.status(500).json({ error });
-  }
-  try {
-    return res.status(200).json({
-      organizations : find
+  const { name, subOrganizations } = req.body;
+  if (!name ) {
+    //Le cas où tous les champs nécessaires ne serait pas soumit ou nul
+    return res.status(400).json({
+      text: "Requête invalide"
     });
+  }
+  const filter = {
+    name
+  };
+  // On check en base si obet existe déjà
+  try {
+    orga_array = [];
+
+    //only update if the sub organization
+    for(const name of subOrganizations)
+    {
+      console.debug(name);
+      const find = await Organization.findOne({name}, function (err, doc) {
+        console.debug(doc);
+        orga_array.push(name);
+      });
+    }
+    console.debug(orga_array);
+    const update = {
+      name,
+      subOrganizations: orga_array
+    };
+    const find = await Organization.findOneAndUpdate(filter, update);
+    if (find) {
+      return res.status(200).json({
+      text: "Succès"
+      });
+    }else{
+      return res.status(400).json({
+        text: "L'Organization n'existe pas"
+      });
+    }
   } catch (error) {
     return res.status(500).json({ error });
   }
@@ -95,3 +126,4 @@ exports.get = get;
 exports.add = add;
 exports.remove = remove;
 exports.update = update;
+

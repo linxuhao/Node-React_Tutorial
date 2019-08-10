@@ -1,10 +1,10 @@
-const Organization = require("../../schema/schemaOrganization.js");
+const Team = require("../../schema/schemaTeam.js");
 
 //get all
 async function get(req, res) {
   // get all users from the data base
   try {
-    const find = await Organization.find();
+    const find = await Team.find();
   } catch (error) {
     return res.status(500).json({ error });
   }
@@ -18,15 +18,36 @@ async function get(req, res) {
 }
 
 async function add(req, res) {
-  // get all users from the data base
+  const { name } = req.body;
+  if (!name ) {
+    //Le cas où tous les champs nécessaires ne serait pas soumit ou nul
+    return res.status(400).json({
+      text: "Requête invalide"
+    });
+  }
+  // Création d'un new objet
+  const team = {
+    name
+  };
+  // On check en base si obet existe déjà
   try {
-    const find = await Organization.find();
+    const find = await Team.findOne({
+      name
+    });
+    if (find) {
+      return res.status(400).json({
+        text: "L'Organization existe déjà"
+      });
+    }
   } catch (error) {
     return res.status(500).json({ error });
   }
   try {
+    // Sauvegarde de l'utilisateur en base
+    const data = new Team(name);
+    const object = await data.save();
     return res.status(200).json({
-      organizations : find
+      text: "Succès"
     });
   } catch (error) {
     return res.status(500).json({ error });
@@ -34,32 +55,16 @@ async function add(req, res) {
 }
 
 async function remove(req, res) {
-  // get all users from the data base
-  try {
-    const find = await Organization.find();
-  } catch (error) {
-    return res.status(500).json({ error });
-  }
-  try {
-    return res.status(200).json({
-      organizations : find
+  const { name } = req.body;
+  if (!name ) {
+    //Le cas où tous les champs nécessaires ne serait pas soumit ou nul
+    return res.status(400).json({
+      text: "Requête invalide"
     });
-  } catch (error) {
-    return res.status(500).json({ error });
   }
-}
-
-async function update(req, res) {
-  // get all users from the data base
+  // On check en base si obet existe déjà
   try {
-    const find = await Organization.find();
-  } catch (error) {
-    return res.status(500).json({ error });
-  }
-  try {
-    return res.status(200).json({
-      organizations : find
-    });
+    Team.findOneAndRemove({name})
   } catch (error) {
     return res.status(500).json({ error });
   }
@@ -70,4 +75,3 @@ async function update(req, res) {
 exports.get = get;
 exports.add = add;
 exports.remove = remove;
-exports.update = update;

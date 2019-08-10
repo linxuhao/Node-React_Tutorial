@@ -76,14 +76,17 @@ async function login(req, res) {
 //get all users
 async function get(req, res) {
   // get all users from the data base
+  var users;
   try {
-    const findUsers = await User.find();
+    const find = await User.find({}, function (err, docs) {
+      users = docs
+    });
   } catch (error) {
     return res.status(500).json({ error });
   }
   try {
     return res.status(200).json({
-      users : findUsers
+      users : users
     });
   } catch (error) {
     return res.status(500).json({ error });

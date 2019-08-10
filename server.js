@@ -5,7 +5,10 @@ const bodyParser = require('body-parser');
 
 //Connexion à la base de donnée
 mongoose
-  .connect("mongodb://localhost/db", { useNewUrlParser: true })
+  .connect("mongodb://localhost/db", { 
+    useNewUrlParser: true,
+    useFindAndModify: false
+   })
   .then(() => {
     console.log("Connected to mongoDB");
   })
