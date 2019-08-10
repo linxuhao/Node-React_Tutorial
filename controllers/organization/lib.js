@@ -1,8 +1,23 @@
-const User = require("../../schema/schemaUser.js");
-const passwordHash = require("password-hash");
+const Organization = require("../../schema/schemaOrganization.js");
 
-//need username when signing up
-async function signup(req, res) {
+//get all
+async function get(req, res) {
+  // get all users from the data base
+  try {
+    const find = await Organization.find();
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+  try {
+    return res.status(200).json({
+      organizations : find
+    });
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+}
+//TODO
+async function add(req, res) {
   const { password, email, name } = req.body;
   if (!email || !password || !name) {
     //Le cas où tous les champs nécessaires ne serait pas soumit ou nul
@@ -42,48 +57,32 @@ async function signup(req, res) {
   }
 }
 
-//no need user name when logging
-async function login(req, res) {
-  const { password, email} = req.body;
-  if (!email || !password) {
-    //Le cas où tous les champs nécessaires ne serait pas soumit ou nul
-    return res.status(400).json({
-      text: "Requête invalide"
-    });
-  }
-  try {
-    // On check si l'utilisateur existe en base
-    const findUser = await User.findOne({ email });
-    if (!findUser)
-      return res.status(401).json({
-        text: "L'utilisateur n'existe pas"
-      });
-    if (!findUser.authenticate(password))
-      return res.status(401).json({
-        text: "Mot de passe incorrect"
-      });
-    return res.status(200).json({
-      token: findUser.getToken(),
-      text: "Authentification réussi"
-    });
-  } catch (error) {
-    return res.status(500).json({
-      error
-    });
-  }
-}
-
-//get all users
-async function get(req, res) {
+async function remove(req, res) {
   // get all users from the data base
   try {
-    const findUsers = await User.find();
+    const find = await Organization.find();
   } catch (error) {
     return res.status(500).json({ error });
   }
   try {
     return res.status(200).json({
-      users : findUsers
+      organizations : find
+    });
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+}
+
+async function update(req, res) {
+  // get all users from the data base
+  try {
+    const find = await Organization.find();
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+  try {
+    return res.status(200).json({
+      organizations : find
     });
   } catch (error) {
     return res.status(500).json({ error });
@@ -92,6 +91,7 @@ async function get(req, res) {
 
 //On exporte nos deux fonctions
 
-exports.login = login;
-exports.signup = signup;
 exports.get = get;
+exports.add = add;
+exports.remove = remove;
+exports.update = update;

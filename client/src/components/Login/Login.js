@@ -52,6 +52,7 @@ export class Login extends React.Component {
         <Button onClick={this.send} block bsSize="large" type="submit">
           Connexion
         </Button>
+        <Button href="/signUp" block bsSize="large" >SignUp</Button>
       </div>
     );
   }

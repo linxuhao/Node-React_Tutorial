@@ -68,6 +68,7 @@ export class Signup extends React.Component {
         <Button onClick={this.send} block bsSize="large" type="submit">
           Inscription
         </Button>
+        <Button href="/" block bsSize="large">Back</Button>
       </div>
     );
   }

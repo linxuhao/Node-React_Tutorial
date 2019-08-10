@@ -38,6 +38,14 @@ const userRouter = express.Router();
 app.use("/user", userRouter);
 require(__dirname + "/controllers/userController")(userRouter);
 
+const organizationRouter = express.Router();
+app.use("/organization", organizationRouter);
+require(__dirname + "/controllers/organizationController")(organizationRouter);
+
+const teamRouter = express.Router();
+app.use("/team", teamRouter);
+require(__dirname + "/controllers/teamController")(teamRouter);
+
 //Définition et mise en place du port d'écoute
 const port = 8800;
 app.listen(port, () => console.log(`Listening on port ${port}`));

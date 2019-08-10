@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const passwordHash = require("password-hash");
 const jwt = require("jwt-simple");
 const config = require("../config/config");
+const Oraganization = require("../schema/schemaOrganization.js");
 
 const userSchema = mongoose.Schema(
   {
@@ -19,6 +20,9 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true
+    },
+    organization: {
+      type : Oraganization.schema
     }
   },
   { timestamps: { createdAt: "created_at" } }
