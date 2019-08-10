@@ -6,10 +6,11 @@ const teamSchema = mongoose.Schema(
     name :{
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      sparse: true
     },
     users: {
-      type: [User.schema]
+      type: [User.schema],
     }
   },
   { timestamps: { createdAt: "created_at" } }

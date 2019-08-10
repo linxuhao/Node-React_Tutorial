@@ -94,13 +94,10 @@ async function update(req, res) {
     //only update if the sub organization
     for(const name of subOrganizations)
     {
-      console.debug(name);
       const find = await Organization.findOne({name}, function (err, doc) {
-        console.debug(doc);
         orga_array.push(name);
       });
     }
-    console.debug(orga_array);
     const update = {
       name,
       subOrganizations: orga_array
