@@ -1,4 +1,4 @@
-const User = require("../../schema/schemaUser.js");
+const User = require("../../schema/shemaUser.js");
 const passwordHash = require("password-hash");
 
 //need username when signing up
